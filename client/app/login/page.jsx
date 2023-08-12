@@ -27,7 +27,6 @@ function LoginForm() {
     watch,
     reset,
     formState,
-    setError,
   } = useForm({
     criteriaMode: 'all',
     defaultValues: { username: '', password: '' },

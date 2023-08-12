@@ -2,59 +2,70 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
+import { ToastContainer } from 'react-toastify';
 import { ErrorMessage } from '@hookform/error-message';
 import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { fetchUserResgister } from '../store/reducers/registerUserSlice';
+import { removeError } from '../store/reducers/errorSlice';
 import Navbar from '../components/Navbar';
 
 function RegisterForm() {
-  const [passd1, setPassd1] = useState('');
-  const [passd2, setPassd2] = useState('');
-  const [isValidInput, setIsValidInput] = useState(true);
-
-  const isLoading = useSelector(store => store.loginState.isLoading);
-  const isAuth = useSelector(store => store.loginState.isAuth);
+  const isLoadingStore = useSelector(store => store.registerState.isLoading);
+  const isAuth = useSelector(store => store.registerState.isAuth);
+  const errorMessage = useSelector(store => store.errorState.message);
   const dispatch = useDispatch();
   const router = useRouter();
 
   const {
     register,
-    formState: { errors, isSubmitSuccessful },
+    formState: { touchedFields, dirtyFields, errors, isSubmitSuccessful },
     handleSubmit,
-    watch,
     reset,
+    watch,
     formState,
-    getValues,
   } = useForm({
     criteriaMode: 'all',
-    defaultValues: { username: '', password: '' },
+    defaultValues: { username: '', password: '', password2: '' },
   });
 
+  const password = watch('password');
+  const password2 = watch('password2');
+
+  const isDirtyFields =
+    Object.entries(dirtyFields).length &&
+    dirtyFields.password2 &&
+    dirtyFields.password;
+  const isSamePassword = password === password2;
+
   const handleSubmitLocal = data => {
-    console.log(data);
-    dispatch(fetchUserResgister(data));
-    if (!isLoading && isAuth) {
-      router.push('./dashboard');
+    if (!isSamePassword && isDirtyFields) {
+      console.log('Error');
+      toast.error('Passwords do not match!', {
+        position: toast.POSITION.BOTTOM_CENTER,
+        toastId: 'uniqueID',
+      });
+    } else {
+      dispatch(fetchUserResgister(data));
     }
   };
 
-  const handleOnchage = () => {
-    console.log('getting called', getValues('password'));
-    // setIsValidInput(false);
-  };
-  // useEffect(() => {
-  //   console.log('Pass1: ', passd1);
-  //   if (passd1 !== passd2) {
-  //     // setIsValidInput(!isValidInput);
-  //   }
-  // }, [passd2]);
+  useEffect(() => {
+    if (errorMessage) {
+      toast.error(errorMessage, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        toastId: 'customId2',
+      });
+      dispatch(removeError());
+    }
+  }, [errorMessage]);
 
-  // useEffect(() => {
-  //   console.log('ERRORS: ', errors);
-  //   if (isSubmitSuccessful) {
-  //     reset({ username: '', password: '' });
-  //   }
-  // }, [formState, reset]);
+  useEffect(() => {
+    console.log('isAuth', isAuth);
+    if (isSubmitSuccessful && isAuth) {
+      router.push('./dashboard');
+    }
+  }, [isAuth]);
 
   return (
     <>
@@ -83,7 +94,12 @@ function RegisterForm() {
             <form onSubmit={handleSubmit(handleSubmitLocal)}>
               <input
                 type="text"
-                className="w-full px-6 py-3 mb-2 border border-slate-600 rounded-lg font-medium "
+                className={`w-full px-6 py-3 mb-2 rounded-md text-sm shadow-sm placeholder-slate-400 
+                ${
+                  isSubmitSuccessful && !isAuth && !isLoadingStore
+                    ? 'focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 border-2 border-rose-500'
+                    : 'border border-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500'
+                } `}
                 placeholder="Email"
                 {...register('username', {
                   required: 'Username is required.',
@@ -103,7 +119,7 @@ function RegisterForm() {
                 render={({ messages }) => {
                   return messages
                     ? Object.entries(messages).map(([type, message]) => (
-                        <p className="text-sm text-red-500" key={type}>
+                        <p className="text-sm text-rose-500" key={type}>
                           {message}
                         </p>
                       ))
@@ -112,7 +128,7 @@ function RegisterForm() {
               />
               <input
                 type="password"
-                className="w-full px-6 py-3 mb-2 border border-slate-600 rounded-lg font-medium"
+                className={`w-full px-6 py-3 mb-2 border border-slate-400 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 `}
                 placeholder="Password"
                 {...register('password', {
                   required: 'Required',
@@ -130,10 +146,9 @@ function RegisterForm() {
                 errors={errors}
                 name="password"
                 render={({ messages }) => {
-                  // console.log('messages', messages);
                   return messages
                     ? Object.entries(messages).map(([type, message]) => (
-                        <p className="text-sm text-red-500" key={type}>
+                        <p className="text-sm text-rose-500" key={type}>
                           {message}
                         </p>
                       ))
@@ -142,11 +157,12 @@ function RegisterForm() {
               />
               <input
                 type="password"
-                className={`w-full px-6 py-3 mb-2 border border-slate-400 rounded-md text-sm shadow-sm placeholder-slate-400 ${
-                  isValidInput
-                    ? 'focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 '
-                    : 'focus:outline-none focus:focus-visible:border-green-500 focus:focus-visible:ring-pink-500'
-                }`}
+                className={`w-full px-6 py-3 mb-2 rounded-md text-sm shadow-sm placeholder-slate-400 
+                ${
+                  !isSamePassword && isDirtyFields
+                    ? 'focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 border-2 border-rose-500'
+                    : 'border border-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500'
+                } `}
                 placeholder="Confirm password"
                 {...register('password2', {
                   required: 'Required.',
@@ -212,6 +228,7 @@ function RegisterForm() {
           </div>
         </div>
       </main>
+      <ToastContainer autoClose={2000} />
     </>
   );
 }
