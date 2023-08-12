@@ -38,12 +38,16 @@ function LoginForm() {
     dispatch(fetchUserLogin(data));
   };
 
+  const handleOnclick = () => {
+    dispatch(resetUserData());
+    router.push('./register');
+  };
+
   useEffect(() => {
     if (isSubmitSuccessful && isAuth) {
       reset({ username: '', password: '' });
     }
 
-    console.log('Error message hook', errorMessage);
     if (errorMessage) {
       toast.error(errorMessage, {
         position: toast.POSITION.BOTTOM_CENTER,
@@ -64,7 +68,7 @@ function LoginForm() {
     <>
       <Navbar />
       <main>
-        <div className="min-h-screen bg-slate-900 flex flex-col justify-center sm:py-12">
+        <div className="min-h-screen bg-slate-900 flex flex-col sm:py-12">
           <div className="p-10 xs:p-0 mx-auto md:w-full md:max-w-md">
             <h1 className="font-bold text-lime-600 text-center text-2xl mb-5">
               LawnMe App
@@ -178,7 +182,7 @@ function LoginForm() {
               <div className="py-5">
                 <div className="grid grid-cols-2 gap-1">
                   <div className="text-center sm:text-left whitespace-nowrap">
-                    <button className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+                    <button className="transition duration-200 mx-5 px-3 py-2 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -196,8 +200,13 @@ function LoginForm() {
                     </button>
                   </div>
                   <div className="text-center sm:text-right whitespace-nowrap">
-                    <button className="transition duration-200 mx-5 px-5 py-4 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
-                      <FontAwesomeIcon icon={faFileSignature} />
+                    <button
+                      onClick={handleOnclick}
+                      className="transition duration-200 mx-5 px-3 py-2 cursor-pointer font-normal text-sm rounded-lg text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 ring-inset">
+                      <FontAwesomeIcon
+                        className="w-4 h-4 inline-block align-text-top"
+                        icon={faFileSignature}
+                      />
                       <span className="inline-block ml-1">Resgister</span>
                     </button>
                   </div>

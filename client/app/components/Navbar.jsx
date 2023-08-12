@@ -11,7 +11,7 @@ import {
 
 export default function Navbar(props) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
-  console.log(props);
+  // console.log(props);
   return (
     <>
       <nav
@@ -127,21 +127,20 @@ export default function Navbar(props) {
                       : 'text-gray-800 hover:text-gray-600') +
                     ' px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold'
                   }
-                  href="#">
+                  href="/register">
                   <FontAwesomeIcon
                     className={
                       (props.transparent
                         ? 'lg:text-gray-300 text-gray-500'
-                        : 'text-gray-500') +
-                      ' fab fa-github text-lg leading-lg '
+                        : 'text-gray-500') + ' text-lg leading-lg '
                     }
                     icon={faHashtag}
                   />
-                  <span className="lg:hidden inline-block ml-2">Star</span>
+                  <span className="lg:hidden inline-block ml-2">Sign Up</span>
                 </a>
               </li>
 
-              <li className="flex items-center">
+              {/* <li className="flex items-center">
                 <button
                   className={
                     (props.transparent
@@ -151,9 +150,13 @@ export default function Navbar(props) {
                   }
                   type="button"
                   style={{ transition: 'all .15s ease' }}>
-                  <FontAwesomeIcon icon={faArrowCircleDown} /> Download
+                  <FontAwesomeIcon
+                    className="w-4 h-4 inline-block align-text-top"
+                    icon={faArrowCircleDown}
+                  />{' '}
+                  Download
                 </button>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>
