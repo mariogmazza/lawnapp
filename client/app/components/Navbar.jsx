@@ -11,7 +11,6 @@ import {
 
 export default function Navbar(props) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
-  // console.log(props);
   return (
     <>
       <nav
